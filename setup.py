@@ -68,7 +68,7 @@ setup(
 		"Source": "https://github.com/tfff1OFFICIAL/PythonUnpack200/"
 	},
 	python_requires=">=3",
-    version="1.0",
+    version="1.0.1",
     ext_modules=[Extension(
         "unpack200",
         [
