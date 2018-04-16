@@ -35,7 +35,7 @@ python3 setup.py build
 ```
 
 It will ask you two questions, enter a full path into both, e.g:
-```bash
+```
 Where is the JDK source located? C:\JDK\src
 Where is the JDK include located? C:\Program Files\Java\jdk1.8.0_131\include
 ```
