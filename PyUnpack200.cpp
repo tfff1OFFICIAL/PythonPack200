@@ -1,6 +1,7 @@
+#define PY_SSIZE_T_CLEAN
 #include "main.cpp"
 #include <iostream>
-#include <Python.h>
+#include "Python.h"
 
 #ifndef ZLIB_WINAPI
 #define ZLIB_WINAPI
@@ -24,7 +25,10 @@ int unpack_wrapper_extract(char* infile, char* outfile, bool remove_source) {
 
     u.infileptr = fopen(infile, "rb");
     if (u.infileptr == null) {
-        PyErr_SetString(PyExc_ValueError, "Failed to open file at <infile>");
+        //char errMsg[sizeof(infile) + 29];
+        //strcpy(errMsg, "Failed to open file at path: ");
+        //strcat(errMsg, infile);
+        PyErr_SetString(PyExc_ValueError, "");
         return NULL;
         //std::cout << "ERROR: failed to open file" << //std::endl;
     }
@@ -32,7 +36,11 @@ int unpack_wrapper_extract(char* infile, char* outfile, bool remove_source) {
     jarout.openJarFile(outfile);
 
     if (jarout.jarfp == null) {
-        PyErr_SetString(PyExc_ValueError, "Failed to open file at <outfile>");
+        //char errMsg[sizeof(outfile) + 29];
+        //strcpy(errMsg, "Failed to open file at path: ");
+        //strcat(errMsg, outfile);
+
+        PyErr_SetString(PyExc_ValueError, "errMsg");
         return NULL;
     }
     //assert(jarout.jarfp != null);
@@ -131,16 +139,16 @@ int unpack_wrapper_extract(char* infile, char* outfile, bool remove_source) {
     //std::cout << "exited with: " << unpacker::run(3, args) << //std::endl;
 }
 
-static PyObject * unpack_wrapper(PyObject * self, PyObject * args, PyObject * kw) {
-    // (infile: String, outloc: String) -> None
+static PyObject * unpack_wrapper(PyObject * self, PyObject * args, PyObject * kwargs) {
+    // (infile: String, outloc: String, remove_source: Boolean) -> None
     char * infile;
     char * outfile;
-    bool remove_source = false;
+    int remove_source = false;
     PyObject * ret;
 
-    static char *kwlist[] = {"infile", "outfile", "remove_source", NULL};
+    static char* kwlist[] = {"infile", "outfile", "remove_source", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kw, "ss|p", kwlist, &infile, &outfile, &remove_source)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ss|p", kwlist, &infile, &outfile, &remove_source)) {
         return NULL;
     }
 
@@ -154,7 +162,7 @@ static PyObject * unpack_wrapper(PyObject * self, PyObject * args, PyObject * kw
     return Py_None;
 }
 
-static PyMethodDef keywdarg_methods[] = {
+static PyMethodDef unpack200_module_methods[] = {
         {"unpack", (PyCFunction)unpack_wrapper, METH_VARARGS | METH_KEYWORDS,
                 "Unpack the pack200 file at <infile> into <outloc>. After extraction, <infile> can be deleted by specifying <remove_source>"},
         {NULL, NULL, 0, NULL} /* Sentinel */
@@ -163,9 +171,9 @@ static PyMethodDef keywdarg_methods[] = {
 static struct PyModuleDef unpack200module = {
         PyModuleDef_HEAD_INIT,
         "unpack200",
-        NULL,
+        "Java Unpack200 wrapper for Python",
         -1,
-        keywdarg_methods
+        unpack200_module_methods
 };
 
 PyMODINIT_FUNC PyInit_unpack200(void) {
